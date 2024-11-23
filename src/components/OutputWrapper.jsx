@@ -18,8 +18,8 @@ function OutputWrapper({ response, error, isWaiting}) {
                 ) : isWaiting ? (
                     <div className="flex flex-col gap-2 w-full">
                         <p className={'opacity-50'}>Processing your prompt...</p>
-                        <Skeleton className="h-4 w-full" />
-                        <Skeleton className="h-4 w-3/4" />
+                        <Skeleton className="h-4 w-full"/>
+                        <Skeleton className="h-4 w-3/4"/>
                     </div>
                 ) : response ? (
                     <div>

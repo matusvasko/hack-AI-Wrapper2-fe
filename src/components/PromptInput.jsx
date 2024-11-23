@@ -17,6 +17,7 @@ function PromptInput({ onResponse, onError, onPromptSubmit }) {
     const [promptText, setPromptText] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const [currentUuid, setCurrentUuid] = useState(null);
+    const [retryCount, setRetryCount] = useState(0);
 
 
     useEffect(() => {
@@ -25,34 +26,44 @@ function PromptInput({ onResponse, onError, onPromptSubmit }) {
         const checkStatus = async () => {
             if (!currentUuid) return;
 
+            if (retryCount >= 30) {
+                clearInterval(pollInterval);
+                setIsLoading(false);
+                onError?.("Timed out after 30 retries.");
+                setRetryCount(0);
+                return;
+            }
+
             try {
-                const { data } = await axios.post(API_ENDPOINTS.STATUS, {
-                    uuid: currentUuid
-                });
+                const { data } = await axios.get(`${API_ENDPOINTS.STATUS}/${currentUuid}`);
 
                 if (data.status === 'finished') {
                     clearInterval(pollInterval);
                     setCurrentUuid(null);
                     setIsLoading(false);
+                    setRetryCount(0);
                     onResponse?.(data.response);
-                }
-                else if (data.status === 'failed') {
+                } else if (data.status === 'failed') {
                     clearInterval(pollInterval);
                     setCurrentUuid(null);
                     setIsLoading(false);
+                    setRetryCount(0);
                     onError?.("Prompt processing failed.");
+                } else {
+                    setRetryCount((prevCount) => prevCount + 1);
                 }
             } catch (error) {
                 console.error('Error checking status:', error);
                 clearInterval(pollInterval);
                 setCurrentUuid(null);
                 setIsLoading(false);
+                setRetryCount(0);
                 onError?.("Error checking status.");
             }
         };
 
         if (currentUuid) {
-            pollInterval = setInterval(checkStatus, 1000);
+            pollInterval = setInterval(checkStatus, 3000);
         }
 
         return () => {
@@ -60,7 +71,7 @@ function PromptInput({ onResponse, onError, onPromptSubmit }) {
                 clearInterval(pollInterval);
             }
         };
-    }, [currentUuid, onResponse]);
+    }, [currentUuid, retryCount, onResponse, onError]);
 
 
     const handleSubmit = async () => {
