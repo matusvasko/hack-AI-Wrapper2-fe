@@ -43,7 +43,7 @@ function PromptInput({ onResponse, onError, onPromptSubmit }) {
                     setCurrentUuid(null);
                     setIsLoading(false);
                     setRetryCount(0);
-                    onResponse?.(promptText, data.response, pickedDataset, pickedModel);
+                    onResponse?.(pickedDataset, pickedModel, data.response);
                 } else if (data.status === 'failed') {
                     clearInterval(pollInterval);
                     setCurrentUuid(null);
@@ -80,12 +80,15 @@ function PromptInput({ onResponse, onError, onPromptSubmit }) {
     const handleSubmit = async () => {
         if (!promptText.trim() || isLoading) return;
 
+        const currentPrompt = promptText; // Store the prompt text locally
+        setPromptText(""); // Clear the input field immediately after submission
+
         onError?.(null);
         setIsLoading(true);
-        onPromptSubmit(promptText);
+        onPromptSubmit(currentPrompt);
 
         axios.post(API_ENDPOINTS.PROMPT, {
-            prompt: promptText
+            prompt: currentPrompt
         })
         .then((response) => {
             const { data } = response;

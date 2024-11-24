@@ -3,26 +3,23 @@ import PromptInput from "@/components/PromptInput.jsx";
 import { useState } from 'react';
 
 function MainPromptWrapper(props) {
-    const [response, setResponse] = useState(null);
     const [error, setError] = useState(null);
     const [isWaiting, setIsWaiting] = useState(false);
+    const [history, setHistory] = useState([]);
     const [prompt, setPrompt] = useState(null);
-    const [dataset, setDataset] = useState(null);
-    const [model, setModel] = useState(null);
 
-    const handleResponse = (prompt, response, dataset, model) => {
+    const handleResponse = (dataset, model, response) => {
         setIsWaiting(false);
-        setPrompt(prompt)
-        setResponse(response);
-        setDataset(dataset);
-        setModel(model);
         setError(null);
+        setHistory((prevHistory) => [
+            ...prevHistory,
+            { prompt, dataset, model, response},
+        ]);
     };
 
     const handleError = (errorMessage) => {
         setIsWaiting(false);
         setError(errorMessage);
-        setResponse(null);
     };
 
     const handlePromptSubmit = (prompt) => {
@@ -34,10 +31,7 @@ function MainPromptWrapper(props) {
         <div className={'flex flex-col w-full p-8 gap-2 min-h-screen'}>
             {/*<DragAndDrop></DragAndDrop>*/}
             <OutputWrapper
-                prompt={prompt}
-                response={response}
-                dataset={dataset}
-                model={model}
+                history={history}
                 error={error}
                 isWaiting={isWaiting}
             />
