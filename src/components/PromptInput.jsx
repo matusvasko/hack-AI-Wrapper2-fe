@@ -12,7 +12,7 @@ import { Brain, ChevronsUpDown, Database, Send } from "lucide-react";
 import { useEffect, useState } from 'react';
 
 function PromptInput({ onResponse, onError, onPromptSubmit }) {
-    const [pickedDataset, setPickedDataset] = useState("dataset-1")
+    const [pickedDataset, setPickedDataset] = useState("covid-slovakia")
     const [pickedModel, setPickedModel] = useState("gpt-4o")
     const [promptText, setPromptText] = useState("");
     const [isLoading, setIsLoading] = useState(false);
@@ -126,9 +126,9 @@ function PromptInput({ onResponse, onError, onPromptSubmit }) {
                     </DropdownMenuTrigger>
                     <DropdownMenuContent className="w-56">
                         <DropdownMenuRadioGroup value={pickedDataset} onValueChange={setPickedDataset}>
-                            <DropdownMenuRadioItem value="dataset-1">dataset-1</DropdownMenuRadioItem>
-                            <DropdownMenuRadioItem value="dataset-2">dataset-2</DropdownMenuRadioItem>
-                            <DropdownMenuRadioItem value="dataset-3">dataset-3</DropdownMenuRadioItem>
+                            <DropdownMenuRadioItem value="covid-slovakia">covid-slovakia</DropdownMenuRadioItem>
+                            <DropdownMenuRadioItem value="covid-czech-republic">covid-czech-republic</DropdownMenuRadioItem>
+                            <DropdownMenuRadioItem value="covid-austria">covid-austria</DropdownMenuRadioItem>
                         </DropdownMenuRadioGroup>
                     </DropdownMenuContent>
                 </DropdownMenu>
@@ -142,8 +142,6 @@ function PromptInput({ onResponse, onError, onPromptSubmit }) {
                     </DropdownMenuTrigger>
                     <DropdownMenuContent className="w-56">
                         <DropdownMenuRadioGroup value={pickedModel} onValueChange={setPickedModel}>
-                            <DropdownMenuRadioItem value="gpt-4o">gpt-4o</DropdownMenuRadioItem>
-                            <DropdownMenuRadioItem value="gpt-4o">gpt-4o</DropdownMenuRadioItem>
                             <DropdownMenuRadioItem value="gpt-4o">gpt-4o</DropdownMenuRadioItem>
                         </DropdownMenuRadioGroup>
                     </DropdownMenuContent>

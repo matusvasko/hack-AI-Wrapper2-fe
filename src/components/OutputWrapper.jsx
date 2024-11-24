@@ -5,7 +5,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Brain, Database, Download } from "lucide-react";
 
 
-
 function OutputWrapper({ history, error, isWaiting }) {
     return (
         <ScrollArea className="h-full w-full flex flex-col rounded-none p-4">
