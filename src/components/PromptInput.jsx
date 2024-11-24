@@ -1,15 +1,15 @@
-import React, {useEffect, useState} from 'react';
-import {Brain, ChevronsUpDown, Database, Send} from "lucide-react"
-import {Input} from "@/components/ui/input.jsx";
-import {Button} from "@/components/ui/button.jsx";
+import { Button } from "@/components/ui/button.jsx";
 import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuRadioGroup, DropdownMenuRadioItem,
     DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu.jsx";
-import axios from "axios";
+import { Input } from "@/components/ui/input.jsx";
 import { API_ENDPOINTS } from "@/config/apiConfig";
+import axios from "axios";
+import { Brain, ChevronsUpDown, Database, Send } from "lucide-react";
+import { useEffect, useState } from 'react';
 
 function PromptInput({ onResponse, onError, onPromptSubmit }) {
     const [pickedDataset, setPickedDataset] = useState("dataset-1")
@@ -34,15 +34,16 @@ function PromptInput({ onResponse, onError, onPromptSubmit }) {
                 return;
             }
 
-            try {
-                const { data } = await axios.get(`${API_ENDPOINTS.STATUS}/${currentUuid}`);
+            axios.get(API_ENDPOINTS.STATUS + `/${currentUuid}`)
+            .then((response) => {
+                const { data } = response;
 
                 if (data.status === 'finished') {
                     clearInterval(pollInterval);
                     setCurrentUuid(null);
                     setIsLoading(false);
                     setRetryCount(0);
-                    onResponse?.(data.response);
+                    onResponse?.(promptText, data.response, pickedDataset, pickedModel);
                 } else if (data.status === 'failed') {
                     clearInterval(pollInterval);
                     setCurrentUuid(null);
@@ -50,16 +51,18 @@ function PromptInput({ onResponse, onError, onPromptSubmit }) {
                     setRetryCount(0);
                     onError?.("Prompt processing failed.");
                 } else {
-                    setRetryCount((prevCount) => prevCount + 1);
+                    setRetryCount(prevCount => prevCount + 1);
                 }
-            } catch (error) {
+                console.log('get-- GOT RESPONSE:', response)
+            })
+            .catch((error) => {
                 console.error('Error checking status:', error);
                 clearInterval(pollInterval);
                 setCurrentUuid(null);
                 setIsLoading(false);
                 setRetryCount(0);
                 onError?.("Error checking status.");
-            }
+            });
         };
 
         if (currentUuid) {
@@ -79,19 +82,21 @@ function PromptInput({ onResponse, onError, onPromptSubmit }) {
 
         onError?.(null);
         setIsLoading(true);
-        onPromptSubmit();
+        onPromptSubmit(promptText);
 
-        try {
-            const { data } = await axios.post(API_ENDPOINTS.PROMPT, {
-                prompt: promptText
-            });
-
+        axios.post(API_ENDPOINTS.PROMPT, {
+            prompt: promptText
+        })
+        .then((response) => {
+            const { data } = response;
+            console.log('post-- GOT RESPONSE:', response)
             setCurrentUuid(data.uuid);
-        } catch (error) {
+        })
+        .catch((error) => {
             console.error('Error submitting prompt:', error);
             setIsLoading(false);
             onError?.("Prompt processing failed.");
-        }
+        });
     };
 
 

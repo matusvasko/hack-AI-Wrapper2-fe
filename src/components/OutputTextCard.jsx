@@ -1,21 +1,15 @@
-import * as React from "react"
 
-import { Button } from "@/components/ui/button"
 import {
     Card,
-    CardContent,
-    CardDescription,
-    CardFooter,
-    CardHeader,
-    CardTitle,
+    CardContent
 } from "@/components/ui/card"
 
 
-export function OutputTextCard() {
+export function OutputTextCard({outputText}) {
     return (
-        <Card className="w-full">
+        <Card className="w-full pt-4">
             <CardContent>
-                text output
+                {outputText}
             </CardContent>
         </Card>
     )
